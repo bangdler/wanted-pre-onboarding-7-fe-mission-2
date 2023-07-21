@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 export interface User {
   id: string;
@@ -22,8 +23,23 @@ export async function getServerSideProps() {
   };
 }
 
-function UsersPage({ users }: { users: User[] }) {
-  return (
+// { users }: { users: User[] }
+function UsersPage() {
+  const [users, setUsers] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getData = async () => {
+      const { data } = await axios.get(`/api/04/users`);
+      setLoading(false);
+      setUsers(data);
+    };
+    getData();
+  }, []);
+
+  return loading ? (
+    <div>...loading</div>
+  ) : (
     <ul>
       {users.map(user => (
         <li key={user.id}>
